@@ -53,19 +53,41 @@ def countFingers(image, hand_landmarks, handNo=0):
 		# PINCH
 
 		# Draw a LINE between FINGER TIP and THUMB TIP
+		finger_tip_x= int ((landmarks[8].x)*width)
+		finger_tip_y= int ((landmarks[8].y)*height)
 		
+		thumb_tip_x= int ((landmarks[4].x)*width)
+		thumb_tip_y= int ((landmarks[4].y)*height)
+
+		cv2.line(image,(finger_tip_x,finger_tip_y),(thumb_tip_x,thumb_tip_y),(255,0,0),2)
 
 		# Draw a CIRCLE on CENTER of the LINE between FINGER TIP and THUMB TIP
-		
+		centre_x=int((finger_tip_x + thumb_tip_x)/2)
+		centre_y=int((finger_tip_y + thumb_tip_y)/2)
+
+		cv2.circle(image,(centre_x,centre_y),2,(0,0,255),2)
 
 		# Calculate DISTANCE between FINGER TIP and THUMB TIP
-		
+		distance=math.sqrt(((finger_tip_x-thumb_tip_x)**2)+((finger_tip_y-thumb_tip_y)**2)/2)
+		print("distance ",distance)
+		print("computer screen size",screen_width,screen_height,"output window size",width,height)
+		print("mouse position",mouse.position,"tips line centre position",centre_x,centre_y)
 
 		# Set Mouse Position on the Screen Relative to the Output Window Size	
-		
+		relative_mouse_x=(centre_x/width)*screen_width
+		relative_mouse_y=(centre_y/height)*screen_height
+		mouse.position=(relative_mouse_x,relative_mouse_y)
 
 		# Check PINCH Formation Conditions
-		
+		if distance>40:
+			if pinch==True:
+				pinch=False
+				mouse.release(Button.left)
+		if distance<=40:
+			if pinch==False:
+				pinch=True
+				mouse.press(Button.left)		
+
 
 
 # Define a function to 
